@@ -21,7 +21,7 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo gem install bundler
     gem update --system
     sudo yum -y install ruby-devel
-    gem install rails -v 7.0.4
+    gem install rails -v 6.1.4
 
     # Update the system and install git
     sudo yum update -y
@@ -35,6 +35,7 @@ resource "aws_instance" "Ruby-on-rail" {
     curl -fsSL https://get.docker.com -o install-docker.sh
     sudo sh install-docker.sh
     sudo systemctl start docker
+    sudo systemctl enable docker
 
     # Clone the Git repository and navigate to the project directory
     git clone https://github.com/beaustar2/Ruby-on-rails-project.git /home/ec2-user/Ruby-on-rails-project
@@ -59,6 +60,7 @@ resource "aws_instance" "Ruby-on-rail" {
 
     # Move files
     mv /home/ec2-user/Ruby-on-rails-project/Dockerfile \
+        /home/ec2-user/Ruby-on-rails-project/.env \
         /home/ec2-user/Ruby-on-rails-project/Gemfile \
         /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml \
         /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres \
