@@ -12,6 +12,16 @@ resource "aws_instance" "Ruby-on-rail" {
   user_data = <<-EOF
     #!/bin/bash
 
+    # Install Ruby
+    sudo yum update -y
+    sudo yum install git -y
+    sudo yum -y install ruby
+    sudo yum -y groupinstall "Development Tools"
+    sudo gem install bundler
+    gem update --system
+    sudo yum -y install ruby-devel
+    gem install rails
+
     # Update the system and install git
     sudo yum update -y
     sudo yum install git -y
@@ -25,36 +35,15 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo sh install-docker.sh
     sudo systemctl start docker
 
-    # Install Ruby
-    sudo yum -y install ruby
-    sudo yum -y groupinstall "Development Tools"
-
-    # Install Bundler
-    sudo gem install bundler
-    
-    # Set GEM_HOME and GEM_PATH
-    echo 'export GEM_HOME=$HOME/.local/share/gem/ruby' >> ~/.bashrc
-    echo 'export GEM_PATH=$GEM_HOME:/usr/share/ruby3.2-gems:/usr/share/gems:/usr/local/share/ruby3.2-gems:/usr/local/share/gems' >> ~/.bashrc
-
-    # Add Ruby gems binary directory to PATH
-    echo 'export PATH=$PATH:$GEM_HOME/bin' >> ~/.bashrc
-    source ~/.bashrc
-
-    # Install Rails dependencies
-    sudo yum -y install ruby-devel
-
-    # Install Rails
-    gem install rails
-    
-    # Clone the Git repository and navigate to project directory
+    # Clone the Git repository and navigate to the project directory
     git clone https://github.com/beaustar2/Ruby-on-rails-project.git /home/ec2-user/Ruby-on-rails-project
     cd /home/ec2-user/Ruby-on-rails-project
 
     # Run docker run command to create a new Rails app
     rails new rails-docker --apl --database=postgresql
-    
+
     cd /home/ec2-user/Ruby-on-rails-project/rails-docker
-    
+
     # Print the master.key
     echo "RAILS_MASTER_KEY=$MASTER_KEY"
 
@@ -75,8 +64,8 @@ resource "aws_instance" "Ruby-on-rail" {
     mv /home/ec2-user/rails-docker/Ruby-on-rails-project/routes.rb /home/ec2-user/Ruby-on-rails-project/rails-docker/config
 
     # Generate the scaffold for the "Post" model
-    rails g scaffold post title body:text    
-    
+    rails g scaffold post title body:text
+
     # Build and run the containers
     docker-compose up --build
   EOF
