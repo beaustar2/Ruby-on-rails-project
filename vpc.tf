@@ -18,7 +18,7 @@ resource "aws_internet_gateway" "ruby-igw" {
 
 # Resource-5: Attach IGW to the VPC
 resource "aws_internet_gateway_attachment" "ruby-igw-attachment" {
-  vpc_id             = aws_vpc.ruby-vpc.id
+  vpc_id              = aws_vpc.ruby-vpc.id
   internet_gateway_id = aws_internet_gateway.ruby-igw.id
 }
 
@@ -89,12 +89,12 @@ resource "aws_route_table_association" "ruby-private-route-table-associate" {
 resource "aws_route" "ruby-private-nat-route" {
   route_table_id         = aws_route_table.ruby-private-route-table.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.pub-nat.id  # Use NAT Gateway
+  nat_gateway_id         = aws_nat_gateway.pub-nat.id # Use NAT Gateway
 }
 
 # Resource-14: Elastic IP for NAT Gateway
 resource "aws_eip" "nat" {
-  vpc      = true
+  vpc = true
   tags = {
     Name = "ruby-eip_NAT"
   }

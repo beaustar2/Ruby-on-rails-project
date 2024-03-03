@@ -4,7 +4,7 @@ resource "aws_instance" "Ruby-on-rail" {
   subnet_id              = aws_subnet.ruby-public-subnet.id
   key_name               = "kiki"
   vpc_security_group_ids = [aws_security_group.ruby-sg.id]
-  private_ip             = "10.0.1.20"  # Use the desired IP address here
+  private_ip             = "10.0.1.20" # Use the desired IP address here
   tags = {
     Name = "Ruby-on-rail"
   }
