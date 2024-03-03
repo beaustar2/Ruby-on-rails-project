@@ -5,6 +5,7 @@ resource "aws_instance" "Ruby-on-rail" {
   key_name               = "kiki"
   vpc_security_group_ids = [aws_security_group.ruby-sg.id]
   private_ip             = "10.0.1.20" # Use the desired IP address here
+
   tags = {
     Name = "Ruby-on-rail"
   }
@@ -50,18 +51,28 @@ resource "aws_instance" "Ruby-on-rail" {
     # Save the master.key to a .env file
     echo "RAILS_MASTER_KEY=$MASTER_KEY" > .env
 
-    rm -rf Dockerfile Gemfile 
-    rm -rf /home/ec2-user/Ruby-on-rails-project/rails-docker/config/database.yaml
-    rm -rf /home/ec2-user/Ruby-on-rails-project/rails-docker/config/routes.rb
-    rm -rf /home/ec2-user/Ruby-on-rails-project/rails-docker/bin/docker-entrypoint
+    # Remove files
+    sudo rm -rf Dockerfile Gemfile \
+        /home/ec2-user/Ruby-on-rails-project/rails-docker/config/database.yaml \
+        /home/ec2-user/Ruby-on-rails-project/rails-docker/config/routes.rb \
+        /home/ec2-user/Ruby-on-rails-project/rails-docker/bin/docker-entrypoint
 
-    mv /home/ec2-user/Ruby-on-rails-project/Dockerfile .
-    mv /home/ec2-user/Ruby-on-rails-project/Gemfile .
-    mv /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml .
-    mv /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres .
-    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/docker-entrypoint /home/ec2-user/Ruby-on-rails-project/rails-docker/bin
-    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/database.yaml /home/ec2-user/Ruby-on-rails-project/rails-docker/config
-    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/routes.rb /home/ec2-user/Ruby-on-rails-project/rails-docker/config
+    # Move files
+    mv /home/ec2-user/Ruby-on-rails-project/Dockerfile \
+        /home/ec2-user/Ruby-on-rails-project/Gemfile \
+        /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml \
+        /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres \
+        .
+
+    # Move and rename files
+    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/docker-entrypoint \
+        /home/ec2-user/Ruby-on-rails-project/rails-docker/bin
+
+    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/database.yaml \
+        /home/ec2-user/Ruby-on-rails-project/rails-docker/config
+
+    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/routes.rb \
+        /home/ec2-user/Ruby-on-rails-project/rails-docker/config
 
     # Generate the scaffold for the "Post" model
     rails g scaffold post title body:text
