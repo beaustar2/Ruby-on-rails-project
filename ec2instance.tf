@@ -27,15 +27,21 @@ resource "aws_instance" "Ruby-on-rail" {
 
     # Install Ruby
     sudo yum -y install ruby
-    sudo yum -y install ruby-devel
     sudo yum -y groupinstall "Development Tools"
 
     # Install Bundler
     sudo gem install bundler
     
+    # Set GEM_HOME and GEM_PATH
+    echo 'export GEM_HOME=$HOME/.local/share/gem/ruby' >> ~/.bashrc
+    echo 'export GEM_PATH=$GEM_HOME:/usr/share/ruby3.2-gems:/usr/share/gems:/usr/local/share/ruby3.2-gems:/usr/local/share/gems' >> ~/.bashrc
+
     # Add Ruby gems binary directory to PATH
-    echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc
+    echo 'export PATH=$PATH:$GEM_HOME/bin' >> ~/.bashrc
     source ~/.bashrc
+
+    # Install Rails dependencies
+    sudo yum -y install ruby-devel
 
     # Install Rails
     gem install rails
