@@ -1,10 +1,10 @@
 resource "aws_instance" "Ruby-on-rail" {
-  ami                    = "ami-05a36e1502605b4aa"
+  ami                    = "ami-02ca28e7c7b8f8be1"
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.ruby-public-subnet.id
   key_name               = "kiki"
   vpc_security_group_ids = [aws_security_group.ruby-sg.id]
-  private_ip             = "10.0.1.20"
+  private_ip             = "10.0.1.20"  # Use the desired IP address here
   tags = {
     Name = "Ruby-on-rail"
   }
@@ -25,42 +25,46 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo sh install-docker.sh
     sudo systemctl start docker
 
-    # Install Ruby and RubyGems
-    sudo yum -y install  ruby ruby-devel
+    # Install Ruby
+    sudo yum -y install ruby
+    sudo yum -y install ruby-devel
+    sudo yum -y groupinstall "Development Tools"
 
     # Install Bundler
     sudo gem install bundler
+    gem install rails
 
     # Clone the Git repository and navigate to project directory
-    git clone https://github.com/beaustar2/Ruby-on-rails-project.git /home/centos/Ruby-on-rails-project
-    cd /home/centos/Ruby-on-rails-project
+    git clone https://github.com/beaustar2/Ruby-on-rails-project.git /home/ec2-user/Ruby-on-rails-project
+    cd /home/ec2-user/Ruby-on-rails-project
 
     # Run docker run command to create a new Rails app
-    sudo docker run --rm -v $(pwd):/app ruby:3.2.0 rails new . --force --database=postgresql
+    rails new rails-docker --apl --database=postgresql
+    
+    cd /home/ec2-user/Ruby-on-rails-project/rails-docker
+    
+    # Print the master.key
+    echo "RAILS_MASTER_KEY=$MASTER_KEY"
 
-    # Update database.yml
-    cat > config/database.yml <<EOL
-    default: &default
-      adapter: postgresql
-      encoding: unicode
-      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-      username: postgres
-      password: <%= ENV['POSTGRES_PASSWORD'] %>
-      host: db
+    # Save the master.key to a .env file
+    echo "RAILS_MASTER_KEY=$MASTER_KEY" > .env
 
-    development:
-      <<: *default
-      database: myapp_development
+    rm -rf Dockerfile Gemfile 
+    rm -rf /home/ec2-user/Ruby-on-rails-project/rails-docker/config/database.yaml
+    rm -rf /home/ec2-user/Ruby-on-rails-project/rails-docker/config/routes.rb
+    rm -rf /home/ec2-user/Ruby-on-rails-project/rails-docker/bin/docker-entrypoint
 
-    test:
-      <<: *default
-      database: myapp_test
+    mv /home/ec2-user/Ruby-on-rails-project/Dockerfile .
+    mv /home/ec2-user/Ruby-on-rails-project/Gemfile .
+    mv /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml .
+    mv /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres .
+    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/docker-entrypoint /home/ec2-user/Ruby-on-rails-project/rails-docker/bin
+    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/database.yaml /home/ec2-user/Ruby-on-rails-project/rails-docker/config
+    mv /home/ec2-user/rails-docker/Ruby-on-rails-project/routes.rb /home/ec2-user/Ruby-on-rails-project/rails-docker/config
 
-    production:
-      <<: *default
-      database: myapp_production
-    EOL
-
+    # Generate the scaffold for the "Post" model
+    rails g scaffold post title body:text    
+    
     # Build and run the containers
     docker-compose up --build
   EOF
