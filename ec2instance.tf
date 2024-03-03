@@ -20,7 +20,7 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo gem install bundler
     gem update --system
     sudo yum -y install ruby-devel
-    gem install rails
+    gem install rails -v 7.0.4
 
     # Update the system and install git
     sudo yum update -y
