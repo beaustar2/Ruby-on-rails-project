@@ -32,8 +32,14 @@ resource "aws_instance" "Ruby-on-rail" {
 
     # Install Bundler
     sudo gem install bundler
-    gem install rails
+    
+    # Add Ruby gems binary directory to PATH
+    echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc
+    source ~/.bashrc
 
+    # Install Rails
+    gem install rails
+    
     # Clone the Git repository and navigate to project directory
     git clone https://github.com/beaustar2/Ruby-on-rails-project.git /home/ec2-user/Ruby-on-rails-project
     cd /home/ec2-user/Ruby-on-rails-project
