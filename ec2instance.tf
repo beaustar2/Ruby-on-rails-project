@@ -42,6 +42,9 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo gem install bundler
     gem update --system
     sudo yum -y install ruby-devel
+    sudo yum -y install postgresql-devel
+    sudo yum -y install sqlite-devel
+    bundle install
     gem install rails -v 7.0.4
 
     # Install Docker Compose
