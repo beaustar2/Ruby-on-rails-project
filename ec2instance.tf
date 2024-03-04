@@ -42,7 +42,7 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo gem install bundler
     gem update --system
     sudo yum -y install ruby-devel
-    gem install rails -v 6.1.4
+    gem install rails -v 7.0.4
 
     # Install Docker Compose
     sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -65,8 +65,8 @@ resource "aws_instance" "Ruby-on-rail" {
 
     # Move files
     mv /home/ec2-user/Ruby-on-rails-project/Dockerfile \
-        /home/ec2-user/Ruby-on-rails-project/env \
-        /home/ec2-user/Ruby-on-rails-project/ruby.version \
+        /home/ec2-user/Ruby-on-rails-project/.env \
+        /home/ec2-user/Ruby-on-rails-project/.ruby.version \
         /home/ec2-user/Ruby-on-rails-project/docker-entrypoint \
         /home/ec2-user/Ruby-on-rails-project/database.yaml \
         /home/ec2-user/Ruby-on-rails-project/routes.rb \
