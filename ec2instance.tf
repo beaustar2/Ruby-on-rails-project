@@ -75,7 +75,6 @@ resource "aws_instance" "Ruby-on-rail" {
         /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml \
         /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres \
         .
-
     # Move and rename files
     mv /home/ec2-user/rails-docker/Ruby-on-rails-project/docker-entrypoint \
         /home/ec2-user/Ruby-on-rails-project/rails-docker/bin
