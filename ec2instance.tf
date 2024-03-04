@@ -14,10 +14,10 @@ resource "aws_instance" "Ruby-on-rail" {
     #!/bin/bash
 
     # Install Docker
-    curl -fsSL https://get.docker.com -o install-docker.sh
-    sudo sh install-docker.sh
-    sudo systemctl start docker
-
+    sudo yum update -y
+    sudo yum install -y docker
+    sudo service docker start
+    
     # Add ec2-user to the docker group to run Docker commands without sudo
     sudo usermod -aG docker ec2-user
 
@@ -76,6 +76,7 @@ resource "aws_instance" "Ruby-on-rail" {
         /home/ec2-user/Ruby-on-rails-project/database.yaml \
         /home/ec2-user/Ruby-on-rails-project/routes.rb \
         /home/ec2-user/Ruby-on-rails-project/Gemfile \
+        /home/ec2-user/Ruby-on-rails-project/Gemfile.lock \
         /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml \
         /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres \
         .
