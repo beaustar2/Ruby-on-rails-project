@@ -11,22 +11,29 @@ resource "aws_instance" "Ruby-on-rail" {
   }
 
    user_data = <<-EOF
-    #!/bin/bash
 
-    # Install Docker
-    sudo amazon-linux-extras install docker -y
-    sudo service docker start
-    sudo usermod -a -G docker ec2-user
-    sudo chkconfig docker on
+#!/bin/bash
 
-    # Add ec2-user to the docker group to run Docker commands without sudo
-    sudo usermod -aG docker ec2-user
+# Install Docker
+curl -fsSL https://get.docker.com -o install-docker.sh
+sudo sh install-docker.sh
+sudo systemctl start docker
 
-    # Verify Docker installation
-    docker --version
+# Add ec2-user to the docker group to run Docker commands without sudo
+sudo usermod -aG docker ec2-user
 
-    # Start the Docker service
-    sudo systemctl start docker
+# Verify Docker installation
+docker --version
+
+# Start the Docker service
+sudo systemctl start docker
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Check Docker Compose version
+docker-compose --version
 
     # Install Ruby and other dependencies
     sudo yum update -y
