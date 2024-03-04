@@ -10,10 +10,25 @@ resource "aws_instance" "Ruby-on-rail" {
     Name = "Ruby-on-rail"
   }
 
-  user_data = <<-EOF
+   user_data = <<-EOF
     #!/bin/bash
 
-    # Install Ruby
+    # Install Docker
+    sudo amazon-linux-extras install docker -y
+    sudo service docker start
+    sudo usermod -a -G docker ec2-user
+    sudo chkconfig docker on
+
+    # Add ec2-user to the docker group to run Docker commands without sudo
+    sudo usermod -aG docker ec2-user
+
+    # Verify Docker installation
+    docker --version
+
+    # Start the Docker service
+    sudo systemctl start docker
+
+    # Install Ruby and other dependencies
     sudo yum update -y
     sudo yum install git -y
     sudo yum -y install ruby
@@ -23,19 +38,9 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo yum -y install ruby-devel
     gem install rails -v 6.1.4
 
-    # Update the system and install git
-    sudo yum update -y
-    sudo yum install git -y
-
     # Install Docker Compose
-    curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    chmod +x /usr/local/bin/docker-compose
-
-    # Install Docker using get.docker.com script
-    curl -fsSL https://get.docker.com -o install-docker.sh
-    sudo sh install-docker.sh
-    sudo systemctl start docker
-    sudo systemctl enable docker
+    sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
 
     # Clone the Git repository and navigate to the project directory
     git clone https://github.com/beaustar2/Ruby-on-rails-project.git /home/ec2-user/Ruby-on-rails-project
@@ -61,6 +66,9 @@ resource "aws_instance" "Ruby-on-rail" {
     # Move files
     mv /home/ec2-user/Ruby-on-rails-project/Dockerfile \
         /home/ec2-user/Ruby-on-rails-project/.env \
+        /home/ec2-user/Ruby-on-rails-project/docker-entrypoint \
+        /home/ec2-user/Ruby-on-rails-project/database.yaml \
+        /home/ec2-user/Ruby-on-rails-project/routes.rb \
         /home/ec2-user/Ruby-on-rails-project/Gemfile \
         /home/ec2-user/Ruby-on-rails-project/docker-compose.yaml \
         /home/ec2-user/Ruby-on-rails-project/dockerfile.postgres \
