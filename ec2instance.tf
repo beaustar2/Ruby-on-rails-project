@@ -10,7 +10,7 @@ resource "aws_instance" "Ruby-on-rail" {
     Name = "Ruby-on-rail"
   }
 
-   user_data = <<-EOF
+  user_data = <<-EOF
 
 #!/bin/bash
 
