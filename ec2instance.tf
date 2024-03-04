@@ -57,12 +57,6 @@ resource "aws_instance" "Ruby-on-rail" {
 
     cd /home/ec2-user/Ruby-on-rails-project/rails-docker
 
-    # Print the master.key
-    echo "RAILS_MASTER_KEY=$MASTER_KEY"
-
-    # Save the master.key to a .env file
-    echo "RAILS_MASTER_KEY=$MASTER_KEY" > .env
-
     # Remove files
     sudo rm -rf Dockerfile Gemfile \
         /home/ec2-user/Ruby-on-rails-project/rails-docker/config/database.yaml \
@@ -71,7 +65,8 @@ resource "aws_instance" "Ruby-on-rail" {
 
     # Move files
     mv /home/ec2-user/Ruby-on-rails-project/Dockerfile \
-        /home/ec2-user/Ruby-on-rails-project/.env \
+        /home/ec2-user/Ruby-on-rails-project/env \
+        /home/ec2-user/Ruby-on-rails-project/ruby.version \
         /home/ec2-user/Ruby-on-rails-project/docker-entrypoint \
         /home/ec2-user/Ruby-on-rails-project/database.yaml \
         /home/ec2-user/Ruby-on-rails-project/routes.rb \
@@ -91,10 +86,17 @@ resource "aws_instance" "Ruby-on-rail" {
     mv /home/ec2-user/rails-docker/Ruby-on-rails-project/routes.rb \
         /home/ec2-user/Ruby-on-rails-project/rails-docker/config
 
+
+    # Print the master.key
+    echo "RAILS_MASTER_KEY=$MASTER_KEY"
+
+    # Save the master.key to a .env file
+    echo "RAILS_MASTER_KEY=$MASTER_KEY" > .env
+
     # Generate the scaffold for the "Post" model
     rails g scaffold post title body:text
 
     # Build and run the containers
-    docker-compose up --build
+    docker-compose build && docker-compose up
   EOF
 }
