@@ -45,7 +45,7 @@ resource "aws_instance" "Ruby-on-rail" {
     sudo yum -y install postgresql-devel
     sudo yum -y install sqlite-devel
     bundle install
-    gem install rails -v 7.0.4
+    gem install rails -v 6.1.4
 
     # Install Docker Compose
     sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
