@@ -37,7 +37,7 @@ resource "aws_instance" "Ruby-on-rail" {
     # Install Ruby and other dependencies
     sudo yum update -y
     sudo yum install git -y
-    sudo yum -y install ruby
+    sudo yum -y install ruby -v 3.2.0
     sudo yum -y groupinstall "Development Tools"
     sudo gem install bundler
     gem update --system
